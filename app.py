@@ -163,12 +163,10 @@ Use:
     with st.spinner("Generating AI Response..."):
 
         try:
-            response = model.generate_content(prompt)
+    response = model.generate_content(prompt)
 
-            st.subheader("📘 AI Response")
-            st.write(response.text)
+    st.subheader("📘 AI Response")
+    st.write(response.text)
 
-        except Exception as e:
-    import traceback
-    st.error(str(e))
-    st.code(traceback.format_exc())
+except Exception as e:
+    st.error(f"Error: {e}")
