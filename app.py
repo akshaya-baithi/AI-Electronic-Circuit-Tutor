@@ -4,9 +4,10 @@ from PIL import Image
 
 # Configure Gemini API
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+st.write("API Key Loaded Successfully")
 
 # Load Gemini Model
-model = genai.GenerativeModel("gemini-2.0-flash")
+model = genai.GenerativeModel("gemini-1.5-pro")
 # Streamlit Page Settings
 st.set_page_config(
     page_title="AI Electronic Circuit Tutor",
@@ -168,4 +169,6 @@ Use:
             st.write(response.text)
 
         except Exception as e:
-            st.error(f"Error: {e}")
+    import traceback
+    st.error(str(e))
+    st.code(traceback.format_exc())
