@@ -1,7 +1,14 @@
 import streamlit as st
-import ollama
+import google.generativeai as genai
 from PIL import Image
 
+# Configure Gemini API
+genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+
+# Load Gemini Model
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+# Streamlit Page Settings
 st.set_page_config(
     page_title="AI Electronic Circuit Tutor",
     page_icon="🔌",
@@ -9,11 +16,9 @@ st.set_page_config(
 )
 
 st.title("🔌 AI Electronic Circuit Tutor")
+st.write("Learn Electronics and Communication Engineering circuits using AI.")
 
-st.write(
-    "Select a circuit and topic to learn Electronics concepts using AI."
-)
-
+# Image Upload
 uploaded_file = st.file_uploader(
     "Upload Circuit Image (Optional)",
     type=["png", "jpg", "jpeg"]
@@ -23,6 +28,7 @@ if uploaded_file is not None:
     image = Image.open(uploaded_file)
     st.image(image, caption="Uploaded Circuit", use_container_width=True)
 
+# Circuit Selection
 circuit_type = st.selectbox(
     "Select Circuit Type",
     [
@@ -108,6 +114,7 @@ circuit_type = st.selectbox(
     ]
 )
 
+# Topic Selection
 topic = st.selectbox(
     "Select Topic",
     [
@@ -124,12 +131,13 @@ topic = st.selectbox(
     ]
 )
 
+# Additional Question
 question = st.text_input(
-    "Additional Question (Optional)",
-    ""
+    "Additional Question (Optional)"
 )
 
-if st.button("Generate AI Explanation"):
+# Generate Response
+if st.button("Generate AI Response"):
 
     prompt = f"""
 You are an expert Electronics and Communication Engineering professor.
@@ -144,20 +152,21 @@ Additional Question:
 {question}
 
 Provide a detailed, accurate, student-friendly explanation.
-Use headings and bullet points wherever appropriate.
+
+Use:
+- Headings
+- Bullet Points
+- Examples where necessary
+- Simple language
 """
 
-    with st.spinner("Generating response..."):
+    with st.spinner("Generating AI Response..."):
 
-        response = ollama.chat(
-            model="gemma2:2b",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        )
+        try:
+            response = model.generate_content(prompt)
 
-        st.subheader("AI Response")
-        st.write(response["message"]["content"])
+            st.subheader("📘 AI Response")
+            st.write(response.text)
+
+        except Exception as e:
+            st.error(f"Error: {e}")
